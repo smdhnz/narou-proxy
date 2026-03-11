@@ -1,22 +1,22 @@
 import { auth } from "@/auth"
 import { NextResponse } from "next/server"
+import { env } from "@/lib/env"
 
 export const proxy = auth((req) => {
   const isAuth = !!req.auth
   const isLoginPage = req.nextUrl.pathname === "/login"
 
+  // ベースURLの決定（AUTH_URL があれば優先、なければ現在のリクエストのオリジンを使用）
+  const baseUrl = env.AUTH_URL || req.nextUrl.origin
+
   // 未ログインでログインページ以外にアクセスした場合、/login へ
   if (!isAuth && !isLoginPage) {
-    const loginUrl = req.nextUrl.clone()
-    loginUrl.pathname = "/login"
-    return NextResponse.redirect(loginUrl)
+    return NextResponse.redirect(new URL("/login", baseUrl))
   }
 
   // ログイン済みでログインページにアクセスした場合、トップページへ
   if (isAuth && isLoginPage) {
-    const homeUrl = req.nextUrl.clone()
-    homeUrl.pathname = "/"
-    return NextResponse.redirect(homeUrl)
+    return NextResponse.redirect(new URL("/", baseUrl))
   }
 })
 
