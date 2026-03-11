@@ -48,6 +48,7 @@ export default function ChapterPage({
   const [fontSize, setFontSize] = useState(20)
   const [fontFamily, setFontFamily] = useState<"sans" | "serif">("serif")
   const [theme, setTheme] = useState<"dark" | "light" | "sepia">("dark")
+  const [showHeader, setShowHeader] = useState(true)
   const {
     history,
     saveHistory,
@@ -56,6 +57,16 @@ export default function ChapterPage({
   } = useReadingHistory()
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasRestored = useRef(false)
+
+  // ヘッダーの自動非表示
+  useEffect(() => {
+    if (showHeader) {
+      const timer = setTimeout(() => {
+        setShowHeader(false)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [showHeader])
 
   // ページ切り替え時にリセット
   useEffect(() => {
@@ -189,7 +200,14 @@ export default function ChapterPage({
       className="flex h-[100dvh] w-full flex-col overflow-hidden bg-background text-foreground"
     >
       {/* 簡素なヘッダー */}
-      <header className="z-30 flex h-14 w-full shrink-0 items-center justify-between border-b bg-background/95 px-4 shadow-sm backdrop-blur">
+      <header
+        className={cn(
+          "fixed top-0 left-0 z-30 flex h-14 w-full shrink-0 items-center justify-between border-b bg-background/95 px-4 shadow-sm backdrop-blur transition-all duration-300",
+          showHeader
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-full opacity-0 pointer-events-none"
+        )}
+      >
         {/* 左: 戻る */}
         <div className="flex w-12 items-center">
           <Button variant="ghost" size="icon" asChild>
@@ -331,8 +349,9 @@ export default function ChapterPage({
       {/* 本文エリア：完全にスクロールのみに任せる */}
       <main
         ref={scrollRef}
+        onClick={() => setShowHeader(!showHeader)}
         className={cn(
-          "h-full w-full overflow-x-auto overflow-y-hidden px-8 py-10 transition-colors duration-200 md:px-24 md:py-20",
+          "h-full w-full overflow-x-auto overflow-y-hidden px-16 py-10 transition-colors duration-200 cursor-pointer md:px-48 md:py-20",
           fontFamily === "serif" ? "font-serif" : "font-sans"
         )}
         style={{
@@ -373,8 +392,6 @@ export default function ChapterPage({
               dangerouslySetInnerHTML={{ __html: line }}
             />
           ))}
-          {/* 読み終わりの余白：スクロールを完結させるため */}
-          <div className="h-full w-32 shrink-0" />
         </article>
       </main>
     </div>
