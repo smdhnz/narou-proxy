@@ -3,6 +3,7 @@ import Discord from "next-auth/providers/discord"
 import { env } from "@/lib/env"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   providers: [
     Discord({
       clientId: env.DISCORD_CLIENT_ID,

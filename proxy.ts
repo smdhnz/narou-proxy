@@ -7,12 +7,16 @@ export const proxy = auth((req) => {
 
   // 未ログインでログインページ以外にアクセスした場合、/login へ
   if (!isAuth && !isLoginPage) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl.origin))
+    const loginUrl = req.nextUrl.clone()
+    loginUrl.pathname = "/login"
+    return NextResponse.redirect(loginUrl)
   }
 
   // ログイン済みでログインページにアクセスした場合、トップページへ
   if (isAuth && isLoginPage) {
-    return NextResponse.redirect(new URL("/", req.nextUrl.origin))
+    const homeUrl = req.nextUrl.clone()
+    homeUrl.pathname = "/"
+    return NextResponse.redirect(homeUrl)
   }
 })
 
