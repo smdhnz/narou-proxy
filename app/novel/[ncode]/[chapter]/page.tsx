@@ -2,8 +2,9 @@
 
 import { useEffect, useState, use, useRef, useLayoutEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Menu, Minus, Plus, Settings2 } from "lucide-react"
+import { ArrowLeft, Menu, Minus, Plus, Settings2, Type } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { useReadingHistory } from "@/hooks/useReadingHistory"
 import {
   ResponsiveDialog as Dialog,
@@ -37,6 +38,7 @@ export default function ChapterPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [fontSize, setFontSize] = useState(20)
+  const [fontFamily, setFontFamily] = useState<"sans" | "serif">("serif")
   const {
     history,
     saveHistory,
@@ -51,10 +53,13 @@ export default function ChapterPage({
     hasRestored.current = false
   }, [ncode, chapter])
 
-  // フォントサイズの読み込み
+  // 設定の読み込み
   useEffect(() => {
     const savedSize = localStorage.getItem("novel_font_size")
     if (savedSize) setFontSize(parseInt(savedSize))
+
+    const savedFont = localStorage.getItem("novel_font_family")
+    if (savedFont === "sans" || savedFont === "serif") setFontFamily(savedFont)
   }, [])
 
   // フォントサイズの保存
@@ -62,6 +67,12 @@ export default function ChapterPage({
     const newSize = Math.min(Math.max(fontSize + delta, 14), 40)
     setFontSize(newSize)
     localStorage.setItem("novel_font_size", newSize.toString())
+  }
+
+  // フォントファミリーの保存
+  const toggleFontFamily = (font: "sans" | "serif") => {
+    setFontFamily(font)
+    localStorage.setItem("novel_font_family", font)
   }
 
   // データ取得
@@ -236,6 +247,30 @@ export default function ChapterPage({
                     </Button>
                   </div>
                 </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-sm font-medium">
+                      <Type className="h-4 w-4" /> フォント
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={fontFamily === "sans" ? "default" : "outline"}
+                      className="h-12 flex-1"
+                      onClick={() => toggleFontFamily("sans")}
+                    >
+                      ゴシック
+                    </Button>
+                    <Button
+                      variant={fontFamily === "serif" ? "default" : "outline"}
+                      className="h-12 flex-1"
+                      onClick={() => toggleFontFamily("serif")}
+                    >
+                      明朝
+                    </Button>
+                  </div>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
@@ -245,7 +280,10 @@ export default function ChapterPage({
       {/* 本文エリア：完全にスクロールのみに任せる */}
       <main
         ref={scrollRef}
-        className="h-full w-full overflow-x-auto overflow-y-hidden px-8 py-10 font-serif md:px-24 md:py-20"
+        className={cn(
+          "h-full w-full overflow-x-auto overflow-y-hidden px-8 py-10 md:px-24 md:py-20",
+          fontFamily === "serif" ? "font-serif" : "font-sans"
+        )}
         style={{
           writingMode: "vertical-rl",
           WebkitOverflowScrolling: "touch",
