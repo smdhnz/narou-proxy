@@ -2,7 +2,15 @@
 
 import { useEffect, useState, use, useRef, useLayoutEffect } from "react"
 import Link from "next/link"
-import { ArrowLeft, Menu, Minus, Plus, Settings2, Type } from "lucide-react"
+import {
+  ArrowLeft,
+  Menu,
+  Minus,
+  Plus,
+  Settings2,
+  Type,
+  Palette,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useReadingHistory } from "@/hooks/useReadingHistory"
@@ -39,6 +47,7 @@ export default function ChapterPage({
   const [error, setError] = useState("")
   const [fontSize, setFontSize] = useState(20)
   const [fontFamily, setFontFamily] = useState<"sans" | "serif">("serif")
+  const [theme, setTheme] = useState<"dark" | "light" | "sepia">("dark")
   const {
     history,
     saveHistory,
@@ -60,6 +69,15 @@ export default function ChapterPage({
 
     const savedFont = localStorage.getItem("novel_font_family")
     if (savedFont === "sans" || savedFont === "serif") setFontFamily(savedFont)
+
+    const savedTheme = localStorage.getItem("novel_theme")
+    if (
+      savedTheme === "dark" ||
+      savedTheme === "light" ||
+      savedTheme === "sepia"
+    ) {
+      setTheme(savedTheme)
+    }
   }, [])
 
   // フォントサイズの保存
@@ -73,6 +91,12 @@ export default function ChapterPage({
   const toggleFontFamily = (font: "sans" | "serif") => {
     setFontFamily(font)
     localStorage.setItem("novel_font_family", font)
+  }
+
+  // テーマの保存
+  const toggleTheme = (newTheme: "dark" | "light" | "sepia") => {
+    setTheme(newTheme)
+    localStorage.setItem("novel_theme", newTheme)
   }
 
   // データ取得
@@ -271,6 +295,33 @@ export default function ChapterPage({
                     </Button>
                   </div>
                 </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-sm font-medium">
+                      <Palette className="h-4 w-4" /> 背景色
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    {[
+                      { id: "dark", bg: "#121212", border: "#3f3f46" },
+                      { id: "light", bg: "#fdfdfd", border: "#d4d4d8" },
+                      { id: "sepia", bg: "#f4ecd8", border: "#dcd3bd" },
+                    ].map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={() => toggleTheme(t.id as any)}
+                        className={cn(
+                          "h-12 w-12 rounded-lg border-2 transition-all",
+                          theme === t.id
+                            ? "border-primary ring-2 ring-primary/20 scale-110"
+                            : "border-muted hover:scale-105"
+                        )}
+                        style={{ backgroundColor: t.bg }}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </DialogContent>
           </Dialog>
@@ -281,12 +332,24 @@ export default function ChapterPage({
       <main
         ref={scrollRef}
         className={cn(
-          "h-full w-full overflow-x-auto overflow-y-hidden px-8 py-10 md:px-24 md:py-20",
+          "h-full w-full overflow-x-auto overflow-y-hidden px-8 py-10 transition-colors duration-200 md:px-24 md:py-20",
           fontFamily === "serif" ? "font-serif" : "font-sans"
         )}
         style={{
           writingMode: "vertical-rl",
           WebkitOverflowScrolling: "touch",
+          backgroundColor:
+            theme === "light"
+              ? "#fdfdfd"
+              : theme === "sepia"
+                ? "#f4ecd8"
+                : "#121212",
+          color:
+            theme === "light"
+              ? "#333333"
+              : theme === "sepia"
+                ? "#5b4636"
+                : "#e4e4e7",
         }}
       >
         <article
@@ -295,7 +358,7 @@ export default function ChapterPage({
         >
           {/* タイトル表示 */}
           <div className="mb-20 ml-20 flex flex-col gap-6">
-            <p className="text-sm font-medium text-muted-foreground/80">
+            <p className="text-sm font-medium opacity-70">
               {novelInfo?.title}
             </p>
             <h1 className="text-3xl leading-tight font-bold tracking-tighter">
