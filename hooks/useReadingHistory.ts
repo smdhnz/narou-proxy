@@ -45,7 +45,6 @@ export function useReadingHistory() {
     })
   }
 
-
   const removeHistory = (ncode: string) => {
     setHistory((prev) => {
       const updated = prev.filter((h) => h.ncode !== ncode)

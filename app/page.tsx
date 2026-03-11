@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, BookOpen, ChevronRight, Trash2 } from "lucide-react"
 import Link from "next/link"
+import { LogoutButton } from "@/components/logout-button"
 
 export default function Home() {
   const [query, setQuery] = useState("")
@@ -27,6 +28,7 @@ export default function Home() {
           <BookOpen className="h-6 w-6" />
           なろうプロキシ
         </h1>
+        <LogoutButton />
       </header>
 
       <section>

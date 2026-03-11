@@ -5,6 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: narou-proxy
     restart: always
+    env_file:
+      - .env.local
     ports:
       - "3000:3000"
     environment:
