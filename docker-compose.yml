@@ -12,3 +12,15 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
+
+  narou-proxy-tunnel:
+    image: alpine:latest
+    container_name: narou-proxy-tunnel
+    restart: always
+    depends_on:
+      - narou-proxy
+    volumes:
+      - ~/.ssh:/root/.ssh:ro
+    command: >
+      sh -c "apk add --no-cache openssh-client &&
+      ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_ed25519 -R ktfmy-narou:80:narou-proxy:3000 ktfmy@tcpexposer.com"
