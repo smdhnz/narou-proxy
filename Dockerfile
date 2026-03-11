@@ -17,7 +17,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN bun run build
 
 # Step 3: Runner
-FROM oven/bun:1-distroless AS runner
+FROM oven/bun:1-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
