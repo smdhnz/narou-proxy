@@ -12,4 +12,3 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_TELEMETRY_DISABLED=1
-      - AUTH_URL=${AUTH_URL:-http://localhost:3000}
