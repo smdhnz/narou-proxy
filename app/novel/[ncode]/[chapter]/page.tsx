@@ -205,7 +205,7 @@ export default function ChapterPage({
           "fixed top-0 left-0 z-30 flex h-14 w-full shrink-0 items-center justify-between border-b bg-background/95 px-4 shadow-sm backdrop-blur transition-all duration-300",
           showHeader
             ? "translate-y-0 opacity-100"
-            : "-translate-y-full opacity-0 pointer-events-none"
+            : "pointer-events-none -translate-y-full opacity-0"
         )}
       >
         {/* 左: 戻る */}
@@ -332,7 +332,7 @@ export default function ChapterPage({
                         className={cn(
                           "h-12 w-12 rounded-lg border-2 transition-all",
                           theme === t.id
-                            ? "border-primary ring-2 ring-primary/20 scale-110"
+                            ? "scale-110 border-primary ring-2 ring-primary/20"
                             : "border-muted hover:scale-105"
                         )}
                         style={{ backgroundColor: t.bg }}
@@ -351,7 +351,7 @@ export default function ChapterPage({
         ref={scrollRef}
         onClick={() => setShowHeader(!showHeader)}
         className={cn(
-          "h-full w-full overflow-x-auto overflow-y-hidden px-16 py-10 transition-colors duration-200 cursor-pointer md:px-48 md:py-20",
+          "h-full w-full cursor-pointer overflow-x-auto overflow-y-hidden px-16 py-10 transition-colors duration-200 md:px-48 md:py-20",
           fontFamily === "serif" ? "font-serif" : "font-sans"
         )}
         style={{
@@ -377,9 +377,7 @@ export default function ChapterPage({
         >
           {/* タイトル表示 */}
           <div className="mb-20 ml-20 flex flex-col gap-6">
-            <p className="text-sm font-medium opacity-70">
-              {novelInfo?.title}
-            </p>
+            <p className="text-sm font-medium opacity-70">{novelInfo?.title}</p>
             <h1 className="text-3xl leading-tight font-bold tracking-tighter">
               {data.title}
             </h1>
